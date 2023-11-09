@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vercel/postgres": "^0.5.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "drizzle-orm": "^0.28.6",
     "lucide-react": "^0.292.0",
     "next": "14.0.1",
     "react": "^18",
@@ -24,6 +26,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "drizzle-kit": "^0.19.13",
     "eslint": "^8",
     "eslint-config-next": "14.0.1",
     "postcss": "^8",
