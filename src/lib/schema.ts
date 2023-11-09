@@ -43,7 +43,7 @@ export const expirationRecord = pgTable('expiration_record', {
   drugId: integer('drug_id').notNull(),
   pharmacyId: integer('pharmacy_id').notNull(),
   userId: integer('user_id').notNull(),
-  expiringOn: date('expiring_on').notNull(),
+  expiringOn: date('expiring_on', { mode: 'date' }).notNull(),
 });
 export const expirationRecordRelations = relations(
   expirationRecord,

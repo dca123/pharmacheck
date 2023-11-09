@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { PropsWithChildren } from 'react';
+import { auth } from './api/auth/[...nextauth]/route';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,7 +18,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <main className="flex min-h-screen flex-col items-center p-24 space-y-4 h-screen">
+          <h1 className="text-xl font-semibold">Pharma Check</h1>
+          <AuthWrapper>{children}</AuthWrapper>
+        </main>
+      </body>
     </html>
   );
+}
+
+async function AuthWrapper(props: PropsWithChildren) {
+  const session = await auth();
+  if (session !== null) {
+    return <>{props.children}</>;
+  }
+  return <h1 className="tracking-wide">Not Authorized</h1>;
 }
