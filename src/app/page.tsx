@@ -1,40 +1,68 @@
 import { auth } from './api/auth/[...nextauth]/route';
 import { db } from '@/lib/db';
 import { eq } from 'drizzle-orm';
-import { users } from '@/lib/schema';
+import { expirationRecord, users } from '@/lib/schema';
 import { ExpirationRecordSheet } from './components';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { format } from 'date-fns';
 
-export default function Home() {
+export default async function Home() {
+  const drugs = await db.query.drugs.findMany();
+  const drugsAsOptions = drugs.map((d) => ({
+    label: d.name,
+    value: String(d.id),
+  }));
+  // .slice(0, 5);
+
   return (
     <div className="w-full space-y-4">
-      <PharmacyName />
-      <div className="border rounded p-4">
-        <ExpirationRecordSheet />
+      <div className="border rounded p-4 flex flex-col">
+        <ExpirationRecordSheet drugs={drugsAsOptions} />
+        <ExpirationRecordsTable />
       </div>
     </div>
   );
 }
 
-async function PharmacyName() {
+async function ExpirationRecordsTable() {
   const session = await auth();
   if (session === null) {
-    throw new Error('Not Authorized');
+    throw new Error('no session');
   }
-  const user = await db.query.users.findFirst({
-    where: eq(users.id, session.user.id),
+  const records = await db.query.expirationRecord.findMany({
+    where: eq(expirationRecord.pharmacyId, session.user.pharmacyId),
     with: {
-      pharmarcy: true,
+      drug: true,
+      user: true,
     },
   });
-
-  if (user === undefined) {
-    throw new Error('User not found');
-  }
-
   return (
-    <div className="flex flex-col justify-center">
-      <h1 className="text-center">{user.pharmarcy.name}</h1>
-      <h2 className="tracking-wide text-center">{user.email}</h2>
-    </div>
+    <Table>
+      <TableCaption>A list of all expiring drugs.</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Drug</TableHead>
+          <TableHead>Expires On</TableHead>
+          <TableHead>Logged By</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {records.map((r) => (
+          <TableRow key={r.id}>
+            <TableCell>{r.drug.name}</TableCell>
+            <TableCell>{format(r.expiringOn, 'dd MMM yy')}</TableCell>
+            <TableCell>{r.user.email}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

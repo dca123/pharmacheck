@@ -1,3 +1,4 @@
+'use server';
 import { db } from '@/lib/db';
 import { Schema } from './components';
 import { expirationRecord } from '@/lib/schema';
@@ -9,9 +10,10 @@ export async function createExpirationRecord(data: Schema) {
     return;
   }
   const record = await db.insert(expirationRecord).values({
-    drugId: 1,
-    expiringOn: new Date(),
-    pharmacyId: 1,
+    drugId: +data.name,
+    expiringOn: data.date,
+    pharmacyId: session.user.pharmacyId,
     userId: session.user.id,
   });
+  console.log(record);
 }

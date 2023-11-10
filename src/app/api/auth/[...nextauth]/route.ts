@@ -34,20 +34,23 @@ const authConfig = {
         return {
           id: user.id,
           email: user.email,
+          pharmacyId: user.pharmacyId,
         } satisfies User;
       },
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user, account }) => {
+    jwt: async ({ token, user, account, session }) => {
       if (account) {
-        token.id = user?.id;
+        token.id = +user.id;
+        token.pharmacyId = user.pharmacyId;
       }
       return token;
     },
     session: ({ session, token }) => {
       if (session.user) {
         session.user.id = token.id;
+        session.user.pharmacyId = token.pharmacyId;
       }
       return session;
     },

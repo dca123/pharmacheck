@@ -28,7 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
+import { CalendarIcon, Check, ChevronsUpDown, Plus } from 'lucide-react';
 import {
   Command,
   CommandEmpty,
@@ -39,18 +39,34 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useFormStatus } from 'react-dom';
+import { createExpirationRecord } from './actions';
 
-export function ExpirationRecordSheet() {
+type Drugs = Array<{
+  label: string;
+  value: string;
+}>;
+
+export function ExpirationRecordSheet(props: { drugs: Drugs }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button>Add Record</Button>
+        <Button className="w-fit self-end">
+          <Plus className="mr-2 h-4 w-4" />
+          Create Expiration Record
+        </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Add a Drug Expiration Record</SheetTitle>
         </SheetHeader>
-        <ExpirationRecordForm />
+        <ExpirationRecordForm
+          drugs={props.drugs}
+          onClose={() => setOpen(false)}
+        />
       </SheetContent>
     </Sheet>
   );
@@ -62,7 +78,10 @@ const Schema = z.object({
 });
 export type Schema = z.infer<typeof Schema>;
 
-export function ExpirationRecordForm() {
+export function ExpirationRecordForm(props: {
+  drugs: Drugs;
+  onClose: () => void;
+}) {
   const form = useForm<Schema>({
     resolver: zodResolver(Schema),
     defaultValues: {
@@ -70,38 +89,15 @@ export function ExpirationRecordForm() {
       name: '',
     },
   });
-  const drugs = [
-    {
-      label: 'Paracetamol',
-      value: 'paracetamol',
-    },
-    {
-      label: 'Ibuprofen',
-      value: 'ibuprofen',
-    },
-    {
-      label: 'Aspirin',
-      value: 'aspirin',
-    },
-    {
-      label: 'Amoxicillin',
-      value: 'amoxicillin',
-    },
-    {
-      label: 'Ciprofloxacin',
-      value: 'ciprofloxacin',
-    },
-    {
-      label: 'Doxycycline',
-      value: 'doxycycline',
-    },
-  ];
-  const onSubmit = (data: Schema) => {
-    console.log(data);
+  const pending = form.formState.isSubmitting;
+
+  const onSubmit = async (data: Schema) => {
+    await createExpirationRecord(data);
+    props.onClose();
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5 py-4">
         <FormField
           control={form.control}
           name="name"
@@ -120,38 +116,40 @@ export function ExpirationRecordForm() {
                       )}
                     >
                       {field.value
-                        ? drugs.find((drug) => drug.value === field.value)
+                        ? props.drugs.find((drug) => drug.value === field.value)
                             ?.label
                         : 'Select Drug'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
+                <PopoverContent className="w-[200px] p-0 ">
                   <Command>
                     <CommandInput placeholder="Search drug..." />
                     <CommandEmpty>No drug found.</CommandEmpty>
-                    <CommandGroup>
-                      {drugs.map((drug) => (
-                        <CommandItem
-                          value={drug.label}
-                          key={drug.value}
-                          onSelect={() => {
-                            form.setValue('name', drug.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              drug.value === field.value
-                                ? 'opacity-100'
-                                : 'opacity-0',
-                            )}
-                          />
-                          {drug.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                    <ScrollArea className="h-72">
+                      <CommandGroup>
+                        {props.drugs.map((drug) => (
+                          <CommandItem
+                            value={drug.label}
+                            key={drug.value}
+                            onSelect={() => {
+                              form.setValue('name', drug.value);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                'mr-2 h-4 w-4',
+                                drug.value === field.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0',
+                              )}
+                            />
+                            {drug.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </ScrollArea>
                   </Command>
                 </PopoverContent>
               </Popover>
@@ -203,7 +201,7 @@ export function ExpirationRecordForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">{pending ? 'Saving ...' : 'Add Record'}</Button>
       </form>
     </Form>
   );
