@@ -1,5 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { db } from './db';
+import { drugs } from './schema';
+import rawDrugs from './raw_drugs.json';
 
 async function main() {
   const results = await db.execute(sql`-- Inserting mock pharmacies
@@ -37,4 +39,20 @@ INSERT INTO pharmacheck_users (email, password_hash, pharmacy_id) VALUES
   console.log(results);
 }
 
-main();
+async function seedDrugs() {
+  const drugsJSON = rawDrugs.ACTUAL_MEDICINAL_PRODUCTS.AMPS.AMP as Array<{
+    DESC: string;
+  }>;
+  for (let i = 0; i < drugsJSON.length; i += 1000) {
+    console.log(`Inserting ${i} to ${i + 1000} drugs`);
+    await db.insert(drugs).values(
+      drugsJSON.slice(i, i + 1000).map((drug) => ({
+        name: drug.DESC,
+        rawData: JSON.stringify(drug),
+      })),
+    );
+    console.log(`Inserted ${i} to ${i + 1000} drugs\n`);
+  }
+}
+
+seedDrugs();

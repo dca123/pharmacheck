@@ -5,6 +5,7 @@ import {
   pgTableCreator,
   serial,
   varchar,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 
 const pgTable = pgTableCreator((name) => `pharmacheck_${name}`);
@@ -33,6 +34,7 @@ export const usersRelations = relations(users, ({ one }) => ({
 export const drugs = pgTable('drugs', {
   id: serial('id').primaryKey(),
   name: varchar('name').notNull(),
+  rawData: jsonb('raw_data').notNull(),
 });
 export const drugsRelations = relations(drugs, ({ many }) => ({
   expirationRecords: many(expirationRecord),

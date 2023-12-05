@@ -23,6 +23,9 @@ dependencies:
   '@radix-ui/react-slot':
     specifier: ^1.0.2
     version: 1.0.2(@types/react@18.2.37)(react@18.2.0)
+  '@tanstack/react-query':
+    specifier: ^5.12.2
+    version: 5.12.2(react@18.2.0)
   '@vercel/postgres':
     specifier: ^0.5.1
     version: 0.5.1
@@ -40,7 +43,7 @@ dependencies:
     version: 2.30.0
   drizzle-orm:
     specifier: ^0.28.6
-    version: 0.28.6(@vercel/postgres@0.5.1)(pg@8.11.3)
+    version: 0.28.6(@vercel/postgres@0.5.1)(pg@8.11.3)(postgres@3.4.3)
   lucide-react:
     specifier: ^0.292.0
     version: 0.292.0(react@18.2.0)
@@ -50,6 +53,9 @@ dependencies:
   next-auth:
     specifier: ^4.24.4
     version: 4.24.4(next@14.0.1)(react-dom@18.2.0)(react@18.2.0)
+  postgres:
+    specifier: ^3.4.3
+    version: 3.4.3
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -103,6 +109,9 @@ devDependencies:
   postcss:
     specifier: ^8
     version: 8.4.31
+  prettier:
+    specifier: ^3.1.0
+    version: 3.1.0
   tailwindcss:
     specifier: ^3.3.0
     version: 3.3.5
@@ -1253,6 +1262,19 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@tanstack/query-core@5.12.1:
+    resolution: {integrity: sha512-WbZztNmKq0t6QjdNmHzezbi/uifYo9j6e2GLJkodsYaYUlzMbAp91RDyeHkIZrm7EfO4wa6Sm5sxJZm5SPlh6w==}
+    dev: false
+
+  /@tanstack/react-query@5.12.2(react@18.2.0):
+    resolution: {integrity: sha512-BeWZu8zVFH20oRc+S/K9ADPgWjEzP/XQCGBNz5IbApUwPQAdwkQYbXODVL5AyAlWiSxhx+P2xlARPBApj2Yrog==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.12.1
+      react: 18.2.0
+    dev: false
+
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
@@ -1881,7 +1903,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.28.6(@vercel/postgres@0.5.1)(pg@8.11.3):
+  /drizzle-orm@0.28.6(@vercel/postgres@0.5.1)(pg@8.11.3)(postgres@3.4.3):
     resolution: {integrity: sha512-yBe+F9htrlYER7uXgDJUQsTHFoIrI5yMm5A0bg0GiZ/kY5jNXTWoEy4KQtg35cE27sw1VbgzoMWHAgCckUUUww==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -1945,6 +1967,7 @@ packages:
     dependencies:
       '@vercel/postgres': 0.5.1
       pg: 8.11.3
+      postgres: 3.4.3
     dev: false
 
   /electron-to-chromium@1.4.579:
@@ -3511,6 +3534,11 @@ packages:
     dependencies:
       xtend: 4.0.2
 
+  /postgres@3.4.3:
+    resolution: {integrity: sha512-iHJn4+M9vbTdHSdDzNkC0crHq+1CUdFhx+YqCE+SqWxPjm+Zu63jq7yZborOBF64c8pc58O5uMudyL1FQcHacA==}
+    engines: {node: '>=12'}
+    dev: false
+
   /preact-render-to-string@5.2.6(preact@10.18.2):
     resolution: {integrity: sha512-JyhErpYOvBV1hEPwIxc/fHWXPfnEGdRKxc8gFdAZ7XV4tlzyzG847XAyEZqoDnynP88akM4eaHcSOzNcLWFguw==}
     peerDependencies:
@@ -3527,6 +3555,12 @@ packages:
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+    dev: true
+
+  /prettier@3.1.0:
+    resolution: {integrity: sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /pretty-format@3.8.0:

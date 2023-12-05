@@ -15,17 +15,10 @@ import {
 import { format } from 'date-fns';
 
 export default async function Home() {
-  const drugs = await db.query.drugs.findMany();
-  const drugsAsOptions = drugs.map((d) => ({
-    label: d.name,
-    value: String(d.id),
-  }));
-  // .slice(0, 5);
-
   return (
     <div className="w-full space-y-4">
       <div className="border rounded p-4 flex flex-col">
-        <ExpirationRecordSheet drugs={drugsAsOptions} />
+        <ExpirationRecordSheet />
         <ExpirationRecordsTable />
       </div>
     </div>
@@ -37,6 +30,7 @@ async function ExpirationRecordsTable() {
   if (session === null) {
     throw new Error('no session');
   }
+
   const records = await db.query.expirationRecord.findMany({
     where: eq(expirationRecord.pharmacyId, session.user.pharmacyId),
     with: {

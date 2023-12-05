@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { users } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-
+import { QueryClientWrapper } from './QueryClientWrapper';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -26,7 +26,9 @@ export default function RootLayout({
         <main className="flex min-h-screen flex-col items-center p-24 space-y-4 h-screen">
           <h1 className="text-sm">Pharma Check</h1>
           <Menu />
-          <AuthWrapper>{children}</AuthWrapper>
+          <AuthWrapper>
+            <QueryClientWrapper>{children}</QueryClientWrapper>
+          </AuthWrapper>
         </main>
       </body>
     </html>
